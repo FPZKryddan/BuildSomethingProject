@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  
+  api_gateway:
+    build:
+      context: ./api_gateway
+    ports:
+      - 5000:5000
+    depends_on:
+      - login_service
+      - task_service
+    environment:
+      - LOGIN_SERVICE_URL=http://login_service:5001
+      - TASK_SERVICE_URL=http://task_service:5003
+    volumes:
+      - ./api_gateway:/api_gateway
+  
+  login_service:
+    build:
+      context: ./login_service
+    ports:
+      - 5001:5001
+    environment:
+      - DATABASE_SERVICE_URL=http://database_service:5002
+    volumes:
+      - ./login_service:/login_service
+
+  task_service:
+    build:
+      context: ./task_service
+    ports:
+      - 5003:5003
+    environment:
+      - DATABASE_SERVICE_URL=http://database_service:5002
+    volumes:
+      - ./task_service:/task_service
+
+  database_service:
+    build:
+      context: ./database_service
+    ports:
+      - 5002:5002
+    volumes:
+      - database_data:/database_service
+      - ./database_service:/database_service
+
+volumes:
+  database_data:  
