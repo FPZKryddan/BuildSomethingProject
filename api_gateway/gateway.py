@@ -35,6 +35,36 @@ def list_tasks(user_id):
         return jsonify(response.json()), response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    data = request.get_json()
+    try:
+        response = requests.post(f"{TASK_SERVICE_URL}/tasks", json=data)
+        return jsonify(response.json()), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/tasks/<int:task_id>', methods=['PUT'])
+def complete_task(task_id):
+    data = request.get_json()
+    try:
+        response = requests.put(f"{TASK_SERVICE_URL}/tasks/{task_id}", json=data)
+        return jsonify(response.json()), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/tasks/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    data = request.get_json()
+    try:
+        response = requests.delete(f"{TASK_SERVICE_URL}/tasks/{task_id}", json=data)
+        return jsonify(response.json()), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

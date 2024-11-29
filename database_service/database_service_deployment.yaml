@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: database-service
+  template:
+    metadata:
+      labels:
+        app: database-service
+    spec:
+      containers:
+      - name: database-service
+        image: fpzkryddan/buildsomethingproject-database_service:latest
+        ports:
+        - containerPort: 5002
+        volumeMounts:
+        - mountPath: /data
+          name: db-storage
+      volumes:
+      - name: db-storage
+        persistentVolumeClaim:
+          claimName: db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+spec:
+  selector:
+    app: database-service
+  ports:
+  - protocol: TCP
+    port: 5002
+    targetPort: 5002

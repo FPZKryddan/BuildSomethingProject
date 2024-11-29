@@ -41,11 +41,17 @@ def create_task():
     
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def complete_task(task_id):
+    task = query_db("SELECT * FROM tasks WHERE id = ?", (task_id,), one=True)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
     query_db("UPDATE tasks SET completed = 1 WHERE id = ?", (task_id,))
     return jsonify({"message": "Task completed!"}), 200
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
+    task = query_db("SELECT * FROM tasks WHERE id = ?", (task_id,), one=True)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
     query_db("DELETE FROM tasks where id = ?", (task_id,))
     return jsonify({"message": "Task deleted!"}), 200
 
